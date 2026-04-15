@@ -206,6 +206,36 @@ class PetControllerTests {
 				.andExpect(view().name("pets/createOrUpdatePetForm"));
 		}
 
+		@Test
+		void processUpdateFormWithDuplicateName() throws Exception {
+			// Editing dog (id=2) but providing the name "petty" which already belongs to
+			// pet (id=1) - the controller should reject this as a duplicate
+			mockMvc
+				.perform(post("/owners/{ownerId}/pets/{petId}/edit", TEST_OWNER_ID, TEST_PET_ID + 1)
+					.param("name", "petty")
+					.param("type", "hamster")
+					.param("birthDate", "2015-02-12"))
+				.andExpect(model().attributeHasErrors("pet"))
+				.andExpect(model().attributeHasFieldErrors("pet", "name"))
+				.andExpect(model().attributeHasFieldErrorCode("pet", "name", "duplicate"))
+				.andExpect(status().isOk())
+				.andExpect(view().name("pets/createOrUpdatePetForm"));
+		}
+
+		@Test
+		void processUpdateFormWithFutureBirthDate() throws Exception {
+			String futureBirthDate = LocalDate.now().plusMonths(1).toString();
+			mockMvc
+				.perform(post("/owners/{ownerId}/pets/{petId}/edit", TEST_OWNER_ID, TEST_PET_ID).param("name", "Betty")
+					.param("type", "hamster")
+					.param("birthDate", futureBirthDate))
+				.andExpect(model().attributeHasErrors("pet"))
+				.andExpect(model().attributeHasFieldErrors("pet", "birthDate"))
+				.andExpect(model().attributeHasFieldErrorCode("pet", "birthDate", "typeMismatch.birthDate"))
+				.andExpect(status().isOk())
+				.andExpect(view().name("pets/createOrUpdatePetForm"));
+		}
+
 	}
 
 }
