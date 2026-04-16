@@ -44,8 +44,8 @@
   <h2 th:text="#{petsAndVisits}">Pets and Visits</h2>
 
   <div class="mb-2">
-    <a th:href="@{__${owner.id}__}" class="btn btn-sm btn-outline-secondary" th:classappend="${sort == null} ? 'active'" th:text="#{sortByName}">Sort by Name</a>
-    <a th:href="@{__${owner.id}__(sort='cost')}" class="btn btn-sm btn-outline-secondary" th:classappend="${sort == 'cost'} ? 'active'" th:text="#{sortByCost}">Sort by Cost</a>
+    <a th:href="@{/owners/__${owner.id}__}" class="btn btn-sm btn-outline-secondary" th:classappend="${sort == null} ? 'active'" th:text="#{sortByName}">Sort by Name</a>
+    <a th:href="@{/owners/__${owner.id}__(sort='cost')}" class="btn btn-sm btn-outline-secondary" th:classappend="${sort == 'cost'} ? 'active'" th:text="#{sortByCost}">Sort by Cost</a>
   </div>
 
   <table class="table table-striped">
