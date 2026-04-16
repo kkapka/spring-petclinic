@@ -172,6 +172,7 @@ class PetController {
 			existingPet.setName(pet.getName());
 			existingPet.setBirthDate(pet.getBirthDate());
 			existingPet.setType(pet.getType());
+			existingPet.setCareCost(pet.getCareCost());
 		}
 		else {
 			owner.addPet(pet);
