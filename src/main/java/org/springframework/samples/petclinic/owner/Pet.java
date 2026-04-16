@@ -15,6 +15,7 @@
  */
 package org.springframework.samples.petclinic.owner;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.LinkedHashSet;
@@ -32,6 +33,8 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OrderBy;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.Digits;
 
 /**
  * Simple business object representing a pet.
@@ -49,6 +52,11 @@ public class Pet extends NamedEntity {
 	@DateTimeFormat(pattern = "yyyy-MM-dd")
 	private LocalDate birthDate;
 
+	@Column(name = "care_cost")
+	@DecimalMin(value = "0.0", inclusive = true)
+	@Digits(integer = 8, fraction = 2)
+	private BigDecimal careCost;
+
 	@ManyToOne
 	@JoinColumn(name = "type_id")
 	private PetType type;
@@ -64,6 +72,14 @@ public class Pet extends NamedEntity {
 
 	public LocalDate getBirthDate() {
 		return this.birthDate;
+	}
+
+	public BigDecimal getCareCost() {
+		return this.careCost;
+	}
+
+	public void setCareCost(BigDecimal careCost) {
+		this.careCost = careCost;
 	}
 
 	public PetType getType() {

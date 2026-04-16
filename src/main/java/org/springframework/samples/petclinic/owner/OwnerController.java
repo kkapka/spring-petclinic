@@ -15,6 +15,8 @@
  */
 package org.springframework.samples.petclinic.owner;
 
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -161,14 +163,25 @@ class OwnerController {
 	/**
 	 * Custom handler for displaying an owner.
 	 * @param ownerId the ID of the owner to display
+	 * @param sort optional sort parameter ("cost" to sort pets by care cost)
 	 * @return a ModelMap with the model attributes for the view
 	 */
 	@GetMapping("/owners/{ownerId}")
-	public ModelAndView showOwner(@PathVariable("ownerId") int ownerId) {
+	public ModelAndView showOwner(@PathVariable("ownerId") int ownerId,
+			@RequestParam(name = "sort", required = false) String sort) {
 		ModelAndView mav = new ModelAndView("owners/ownerDetails");
 		Optional<Owner> optionalOwner = this.owners.findById(ownerId);
 		Owner owner = optionalOwner.orElseThrow(() -> new IllegalArgumentException(
 				"Owner not found with id: " + ownerId + ". Please ensure the ID is correct "));
+		if ("cost".equals(sort)) {
+			List<Pet> sortedPets = new ArrayList<>(owner.getPets());
+			sortedPets.sort(Comparator.comparing(Pet::getCareCost, Comparator.nullsLast(Comparator.naturalOrder())));
+			mav.addObject("pets", sortedPets);
+		}
+		else {
+			mav.addObject("pets", owner.getPets());
+		}
+		mav.addObject("sort", sort);
 		mav.addObject(owner);
 		return mav;
 	}
