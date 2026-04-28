@@ -74,6 +74,38 @@ class PetValidatorTests {
 		assertFalse(errors.hasErrors());
 	}
 
+	@Test
+	void supportsPetClass() {
+		assertTrue(petValidator.supports(Pet.class));
+	}
+
+	@Test
+	void supportsSubclassOfPet() {
+		// Pet is not final so a subclass would also be supported
+		class SpecialPet extends Pet {
+
+		}
+		assertTrue(petValidator.supports(SpecialPet.class));
+	}
+
+	@Test
+	void doesNotSupportUnrelatedClass() {
+		assertFalse(petValidator.supports(String.class));
+	}
+
+	@Test
+	void typeNotRequiredForExistingPet() {
+		// A pet that already exists (has an id) should not fail type validation
+		pet.setId(1);
+		pet.setName(petName);
+		pet.setType(null);
+		pet.setBirthDate(petBirthDate);
+
+		petValidator.validate(pet, errors);
+
+		assertFalse(errors.hasFieldErrors("type"));
+	}
+
 	@Nested
 	class ValidateHasErrors {
 
